@@ -32,7 +32,8 @@ node ("Built-In"){
 
 			dir("$bin_loc"){		
 			  sh '''
-				 ./gateway_import_export_utils.sh --import --api_name $api_project --apigateway_url $apigateway_qa_url
+				  sudo chmod a+x 
+				 ./gateway_import_export_utils.sh --import --api_name $api_project --apigateway_url $apigateway_qa_url 
 			   '''
 			 }
 		  }
