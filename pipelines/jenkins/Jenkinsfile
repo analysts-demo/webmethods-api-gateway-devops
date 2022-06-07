@@ -32,7 +32,7 @@ node ("Built-In"){
 
 			dir("$bin_loc"){		
 			  sh '''
-				 source $bin_loc/common.lib; import_api $api_project $apigateway_qa_url $apigateway_qa_username $apigateway_qa_password
+				 ./gateway_import_export_utils.sh --import --api_name $api_project --apigateway_url $apigateway_qa_url
 			   '''
 			 }
 		  }
