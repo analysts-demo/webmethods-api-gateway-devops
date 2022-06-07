@@ -10,9 +10,9 @@
  This pipeline by default runs on the master and uses the library methods present in bin/common.lib  
 */
 
-node ("master"){
+node ("Built-In"){
 
-    def GIT_LOCATION = "https://github.com/SoftwareAG/webmethods-api-gateway-devops.git"
+    def GIT_LOCATION = "https://github.com/analysts-demo/webmethods-api-gateway-devops.git"
 
 	def workspace = pwd()
 	def script_location = "${workspace}/apigateway"
@@ -22,7 +22,7 @@ node ("master"){
 	
 
 	stage('Checkout') {
-		 checkout([$class: 'GitSCM', branches: [[name: '*/develop']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'apigateway']], submoduleCfg: [], userRemoteConfigs: [[url: "${GIT_LOCATION}"]]])
+		 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'apigateway']], submoduleCfg: [], userRemoteConfigs: [[url: "${GIT_LOCATION}"]]])
 	}
 
     load "${script_location}/pipelines/jenkins/jenkins.properties"
