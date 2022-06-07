@@ -22,6 +22,11 @@ node ("Built-In"){
 	def test_results = "true"
 	
 
+	stage('Checkout') {
+		 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'apigateway']], submoduleCfg: [], userRemoteConfigs: [[url: "${GIT_LOCATION}"]]])
+	}
+	
+	
     stage('Setup K6') {
 		withEnv(["test_loc=${TEST_LOCATION}"]) {
 		  dir("$test_loc"){		
@@ -31,10 +36,6 @@ node ("Built-In"){
 				   '''
     		}
 		 }
-	}
-
-	stage('Checkout') {
-		 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'apigateway']], submoduleCfg: [], userRemoteConfigs: [[url: "${GIT_LOCATION}"]]])
 	}
 
     load "${script_location}/pipelines/jenkins/jenkins.properties"
