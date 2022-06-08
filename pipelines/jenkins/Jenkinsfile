@@ -18,7 +18,6 @@ node ("Built-In"){
 	def script_location = "${workspace}/apigateway"
 	def COMMON_LIB_LOCATION = "${script_location}/bin"
 	def TEST_LOCATION = "${script_location}/tests"
-	def API_TOKEN = "56d2e254d12e4753aea5fa6af5e0839952d10ff780314d72629cf782ccdb6504"
 	def test_results = "true"
 	
 
@@ -28,24 +27,26 @@ node ("Built-In"){
 	
 
     load "${script_location}/pipelines/jenkins/jenkins.properties"
+	def TEST_API_URL = "${apigateway_qa_url}/gateway/Product%20API/manufacturer"
 	
 	stage ('Functional Tests') {
-		withEnv(["api_project=${api_project}","apigateway_qa_url=${apigateway_qa_url}","apigateway_qa_username=${apigateway_qa_username}","apigateway_qa_password=${apigateway_qa_password}","bin_loc=${COMMON_LIB_LOCATION}"]) {
-			dir("$bin_loc"){		
+		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${TEST_API_URL}"]) {
+			dir("$tests_loc"){		
 			  sh '''
-				  chmod -R a+x .
-				 ./gateway_import_export_utils.sh --import --api_name $api_project --apigateway_url $apigateway_qa_url 
+				 k6 run -e API_URL=$url functionalTests.js
 			   '''
+			   junit 'junit.xml'
 			 }
 		  }
 	}
 
 	stage('Performance tests ') {
-		withEnv(["tests_loc=${TEST_LOCATION}/performance-tests","api_token=${API_TOKEN}","url=${apigateway_qa_url}/gateway/Product%20API/manufacturer"]) {
+		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${apigateway_qa_url}/gateway/Product%20API/manufacturer"]) {
 
 			dir("$tests_loc"){		
 			  sh '''
 				 k6 run -e API_URL=$url performanceTests.js
+				 
 			   '''
 			 }
 		  }
@@ -58,7 +59,7 @@ node ("Built-In"){
 		else{
 			withEnv(["api_project=${api_project}","apigateway_qa_url=${apigateway_qa_url}","bin_loc=${COMMON_LIB_LOCATION}","script_location=${script_location}"]) {
 					dir("$bin_loc"){		
-						  sh " source $bin_loc/common.lib; promote_api $api_project \"${script_location}/tests/environment/qa_environment.json\" \"httpInvokeUrl=$apigateway_qa_url;buildNumber=\"${currentBuild.number}\"\""
+						  sh "$bin_loc/common.lib; promote_api $api_project \"${script_location}/tests/environment/qa_environment.json\" \"httpInvokeUrl=$apigateway_qa_url;buildNumber=\"${currentBuild.number}\"\""
 						 }
 					  }
 	    }

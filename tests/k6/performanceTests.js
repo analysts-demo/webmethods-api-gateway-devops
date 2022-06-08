@@ -1,5 +1,6 @@
 import { sleep } from"k6";
 import http from "k6/http";
+import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
 
 export let options = {
   duration: "1m",
@@ -13,3 +14,9 @@ export default function() {
   http.get(`${__ENV.API_URL}`)	
   sleep(3);
 };
+
+export function handleSummary(data) {
+  return {
+    "summary.html": htmlReport(data),
+  };
+}
