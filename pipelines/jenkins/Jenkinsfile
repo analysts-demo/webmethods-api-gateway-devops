@@ -45,8 +45,7 @@ node ("Built-In"){
 
 			dir("$tests_loc"){		
 			  sh '''
-			     k6 login cloud --token $api_token
-				 k6 cloud performanceTests.js
+				 k6 run performanceTests.js
 			   '''
 			 }
 		  }

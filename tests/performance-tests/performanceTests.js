@@ -10,6 +10,6 @@ export let options = {
 };
 
 export default function() {
-  http.get("http://test.k6.io/contacts.php");
+  http.get("http://daeirnd58134.eur.ad.sag:30555/gateway/Product%20API/manufacturer");
   sleep(3);
 };
