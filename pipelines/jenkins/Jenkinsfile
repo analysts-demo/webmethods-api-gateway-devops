@@ -29,6 +29,19 @@ node ("Built-In"){
     load "${script_location}/pipelines/jenkins/jenkins.properties"
 	def TEST_API_URL = "${apigateway_qa_url}/gateway/Product%20API/manufacturer"
 	
+	stage('Performance tests ') {
+		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${TEST_API_URL}"]) {
+
+			dir("$tests_loc"){		
+			  sh '''
+				 k6 run -e API_URL=$url functionalTests.js
+				 
+			   '''
+			 }
+		  }
+	}
+	
+	
 	stage ('Functional Tests') {
 		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${TEST_API_URL}"]) {
 			dir("$tests_loc"){		
@@ -40,7 +53,7 @@ node ("Built-In"){
 					  allowMissing: true,
 					  alwaysLinkToLastBuild: false,
 					  keepAll: true,
-					  reportDir: 'coverage',
+					  reportDir: '.',
 					  reportFiles: 'summary.html',
 					  reportName: "Performance test report"
 					])
@@ -50,18 +63,7 @@ node ("Built-In"){
 		  
 	}
 
-	stage('Performance tests ') {
-		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${apigateway_qa_url}/gateway/Product%20API/manufacturer"]) {
 
-			dir("$tests_loc"){		
-			  sh '''
-				 k6 run -e API_URL=$url performanceTests.js
-				 
-			   '''
-			 }
-		  }
-	}
-	
 	stage('Rollout') {
 	    if(test_results == "false"){
 		  echo "Tests have failed. Not promoting."
