@@ -8,7 +8,7 @@ export default function() {
    check(
     res,
     {
-      'status is 200': (r) => r.status == 200,
+      'Check status of the Response from the API is  200': (r) => r.status == 200,
     }
   );
   sleep(3);
