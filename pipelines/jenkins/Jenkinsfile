@@ -18,6 +18,7 @@ node ("Built-In"){
 	def script_location = "${workspace}/apigateway"
 	def COMMON_LIB_LOCATION = "${script_location}/bin"
 	def TEST_LOCATION = "${script_location}/tests"
+	def API_TOKEN = "56d2e254d12e4753aea5fa6af5e0839952d10ff780314d72629cf782ccdb6504"
 	def test_results = "true"
 	
 
@@ -40,11 +41,12 @@ node ("Built-In"){
 	}
 
 	stage('Performance tests ') {
-		withEnv(["tests_loc=${TEST_LOCATION}/performance-tests"]) {
+		withEnv(["tests_loc=${TEST_LOCATION}/performance-tests","api_token=${API_TOKEN}"]) {
 
 			dir("$tests_loc"){		
 			  sh '''
-				 k6 run performanceTests.js
+			     k6 login cloud $api_token
+				 k6 cloud performanceTests.js
 			   '''
 			 }
 		  }
