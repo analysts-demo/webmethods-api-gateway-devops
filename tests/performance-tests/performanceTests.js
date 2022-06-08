@@ -10,6 +10,6 @@ export let options = {
 };
 
 export default function() {
-  http.get("http://${__ENV.API_URL}/")	
+  http.get('${__ENV.API_URL}')	
   sleep(3);
 };
