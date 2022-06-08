@@ -50,6 +50,7 @@ node ("Built-In"){
 				 k6 run -e API_URL=$url performanceTests.js
 			   '''
 			   } finally {
+			     junit allowEmptyResults: true, keepLongStdio: true, skipOldReports: true, skipPublishingChecks: true, testResults: 'junit.xml'
 			   
 			     publishHTML (target: [
 					  allowMissing: true,

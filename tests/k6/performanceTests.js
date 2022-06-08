@@ -1,6 +1,7 @@
 import { sleep } from"k6";
 import http from "k6/http";
 import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporter/main/dist/bundle.js";
+import { jUnit } from 'https://jslib.k6.io/k6-summary/0.0.1/index.js';
 
 export let options = {
   duration: "1m",
@@ -19,5 +20,6 @@ export default function() {
 export function handleSummary(data) {
   return {
     "summary.html": htmlReport(data),
+	"junit.xml": jUnit(data)
   };
 }
