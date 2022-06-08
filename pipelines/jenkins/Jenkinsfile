@@ -67,7 +67,7 @@ node ("Built-In"){
 	stage('Rollout') {
 			withEnv(["apigateway_promotion_url=${apigateway_qa_url}/rest/apigateway/promotion","username=${apigateway_qa_username}","password=${apigateway_qa_password}"]) {
 						  sh '''
-								 curl -X POST  -d "{\n \"description\": \"Promotion Set to promote to Test\",\n \"name\": \"PromoteToTest\",\n\"destinationStages\": [\n			\"21e165bd-bffc-4cd9-9d33-52fb81e674f9\"\n],\n\"promotedAssets\": {\"api\": [\"a5c09cef-3003-4463-ad58-f49e17fa990f\"]}\n}" -H "Content-Type: application/json" -u username:password $apigateway_promotion_url  
+								 curl -X POST  -d '{\n \"description\": \"Promotion Set to promote to Test\",\n \"name\": \"PromoteToTest\",\n\"destinationStages\": [\n			\"21e165bd-bffc-4cd9-9d33-52fb81e674f9\"\n],\n\"promotedAssets\": {\"api\": [\"a5c09cef-3003-4463-ad58-f49e17fa990f\"]}\n}' -H "Content-Type: application/json" -u username:password $apigateway_promotion_url  
 						  '''
 			}
 	}
