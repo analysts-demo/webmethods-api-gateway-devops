@@ -27,9 +27,9 @@ node ("Built-In"){
 	
 
     load "${script_location}/pipelines/jenkins/jenkins.properties"
-	def TEST_API_URL = "${apigateway_qa_url}/gateway/Product%20API/manufacturer"
+	def TEST_API_URL = "${apigateway_qa_url}/gateway/FlipKartProductFeedAPI/feeds/category/TravelAccessories"
 	
-	stage('Performance tests ') {
+	stage('Functional tests ') {
 		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${TEST_API_URL}"]) {
 
 			dir("$tests_loc"){		
@@ -42,7 +42,7 @@ node ("Built-In"){
 	}
 	
 	
-	stage ('Functional Tests') {
+	stage ('Performance Tests') {
 		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${TEST_API_URL}"]) {
 			dir("$tests_loc"){		
 			  sh '''
@@ -54,7 +54,7 @@ node ("Built-In"){
 					  alwaysLinkToLastBuild: false,
 					  keepAll: true,
 					  reportDir: '.',
-					  reportFiles: '*',
+					  reportFiles: 'summary.html',
 					  reportName: "Performance test report"
 					])
 			 }
@@ -65,16 +65,17 @@ node ("Built-In"){
 
 
 	stage('Rollout') {
-	    if(test_results == "false"){
-		  echo "Tests have failed. Not promoting."
-		}
-		else{
-			withEnv(["api_project=${api_project}","apigateway_qa_url=${apigateway_qa_url}","bin_loc=${COMMON_LIB_LOCATION}","script_location=${script_location}"]) {
-					dir("$bin_loc"){		
-						  sh "$bin_loc/common.lib; promote_api $api_project \"${script_location}/tests/environment/qa_environment.json\" \"httpInvokeUrl=$apigateway_qa_url;buildNumber=\"${currentBuild.number}\"\""
-						 }
-					  }
-	    }
+			withEnv(["apigateway_promotion_url=${apigateway_qa_url}/rest/apigateway/promotion","username=${apigateway_qa_username}","password=${apigateway_qa_password}"]) {
+						  sh '''
+								 curl -X POST  -d '{
+								\"description\": \"Promotion Set to promote to Test\",
+								\"name\": \"PromoteToTest\",
+								\"destinationStages\": [
+									\"21e165bd-bffc-4cd9-9d33-52fb81e674f9\"
+								],
+								\"promotedAssets\": {\"api\": [\"a5c09cef-3003-4463-ad58-f49e17fa990f\"]}
+							}' -H 'Content-Type: application/json' -u username:password $apigateway_promotion_url  
+						  '''
+			}
 	}
-   
 }
