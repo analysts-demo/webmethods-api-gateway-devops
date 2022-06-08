@@ -51,6 +51,7 @@ node ("Built-In"){
 			 }
 		  }
 	}
+	}
 	
 	
 	stage ('Performance Tests') {
