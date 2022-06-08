@@ -5,12 +5,13 @@ import { htmlReport } from "https://raw.githubusercontent.com/benc-uk/k6-reporte
 export default function() {
   let res;
   res =  http.get(`${__ENV.API_URL}`)
-   check(
-    res,
-    {
-      'Check status of the Response from the API is  200': (r) => r.status == 200,
-    }
-  );
+   if (
+    !check(res, {
+      'status code MUST be 200': (res) => res.status == 200,
+    })
+   ) {
+    fail('status code was *not* 200');
+  }
   sleep(3);
 };
 
