@@ -32,11 +32,23 @@ node ("Built-In"){
 	stage('Functional tests ') {
 		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${TEST_API_URL}"]) {
 
-			dir("$tests_loc"){		
-			  sh '''
-				 k6 run -e API_URL=$url functionalTests.js
-				 
-			   '''
+			dir("$tests_loc"){
+			  try {
+				  sh '''
+					 k6 run -e API_URL=$url functionalTests.js
+					 
+				   '''
+				 }
+			 } finally {
+ 			        publishHTML (target: [
+					  allowMissing: true,
+					  alwaysLinkToLastBuild: false,
+					  keepAll: true,
+					  reportDir: '.',
+					  reportFiles: 'summary-functional.html',
+					  reportName: "Functional test report"
+					])
+
 			 }
 		  }
 	}
@@ -50,9 +62,7 @@ node ("Built-In"){
 				 k6 run -e API_URL=$url performanceTests.js
 			   '''
 			   } finally {
-			     junit allowEmptyResults: true, keepLongStdio: true, skipOldReports: true, skipPublishingChecks: true, testResults: 'junit.xml'
-			   
-			     publishHTML (target: [
+			        publishHTML (target: [
 					  allowMissing: true,
 					  alwaysLinkToLastBuild: false,
 					  keepAll: true,
