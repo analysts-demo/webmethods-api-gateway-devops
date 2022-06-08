@@ -33,11 +33,21 @@ node ("Built-In"){
 		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${TEST_API_URL}"]) {
 			dir("$tests_loc"){		
 			  sh '''
-				 k6 run -e API_URL=$url functionalTests.js
+				 k6 run -e API_URL=$url performanceTests.js
 			   '''
-			   junit 'junit.xml'
+			   
+			     publishHTML (target: [
+					  allowMissing: true,
+					  alwaysLinkToLastBuild: false,
+					  keepAll: true,
+					  reportDir: 'coverage',
+					  reportFiles: 'summary.html',
+					  reportName: "Performance test report"
+					])
 			 }
 		  }
+		  
+		  
 	}
 
 	stage('Performance tests ') {
