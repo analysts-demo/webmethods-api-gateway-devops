@@ -44,10 +44,12 @@ node ("Built-In"){
 	
 	stage ('Performance Tests') {
 		withEnv(["tests_loc=${TEST_LOCATION}/k6","url=${TEST_API_URL}"]) {
-			dir("$tests_loc"){		
+			dir("$tests_loc"){
+             try {			
 			  sh '''
 				 k6 run -e API_URL=$url performanceTests.js
 			   '''
+			   } finally {
 			   
 			     publishHTML (target: [
 					  allowMissing: true,
@@ -57,6 +59,7 @@ node ("Built-In"){
 					  reportFiles: 'summary.html',
 					  reportName: "Performance test report"
 					])
+				}
 			 }
 		  }
 		  
