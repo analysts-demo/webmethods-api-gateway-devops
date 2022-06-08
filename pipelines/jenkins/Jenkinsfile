@@ -18,7 +18,6 @@ node ("Built-In"){
 	def script_location = "${workspace}/apigateway"
 	def COMMON_LIB_LOCATION = "${script_location}/bin"
 	def TEST_LOCATION = "${script_location}/tests"
-    def test_folder = ""
 	def test_results = "true"
 	
 
@@ -26,31 +25,27 @@ node ("Built-In"){
 		 checkout([$class: 'GitSCM', branches: [[name: '*/master']], doGenerateSubmoduleConfigurations: false, extensions: [[$class: 'RelativeTargetDirectory', relativeTargetDir: 'apigateway']], submoduleCfg: [], userRemoteConfigs: [[url: "${GIT_LOCATION}"]]])
 	}
 	
-	
-    stage('Setup K6') {
-		withEnv(["test_loc=${TEST_LOCATION}"]) {
-		  dir("$test_loc"){		
-				  sh '''
-					  chmod -R a+x .
-					 ./setupk6.sh
-				   '''
-    		}
-		 }
-	}
 
     load "${script_location}/pipelines/jenkins/jenkins.properties"
 	
 	stage ('Functional Tests') {
-	    //k6
-	}
-
-	stage('Performance tests ') {
-		withEnv(["api_project=${api_project}","apigateway_qa_url=${apigateway_qa_url}","apigateway_qa_username=${apigateway_qa_username}","apigateway_qa_password=${apigateway_qa_password}","bin_loc=${COMMON_LIB_LOCATION}"]) {
+	   rd}","bin_loc=${COMMON_LIB_LOCATION}"]) {
 
 			dir("$bin_loc"){		
 			  sh '''
 				  chmod -R a+x .
 				 ./gateway_import_export_utils.sh --import --api_name $api_project --apigateway_url $apigateway_qa_url 
+			   '''
+			 }
+		  }
+	}
+
+	stage('Performance tests ') {
+		withEnv(["tests_loc=${TEST_LOCATION}/performance-tests"]) {
+
+			dir("$tests_loc"){		
+			  sh '''
+				 k6 run performanceTests.js
 			   '''
 			 }
 		  }
