@@ -41,11 +41,11 @@ node ("Built-In"){
 	}
 
 	stage('Performance tests ') {
-		withEnv(["tests_loc=${TEST_LOCATION}/performance-tests","api_token=${API_TOKEN}"]) {
+		withEnv(["tests_loc=${TEST_LOCATION}/performance-tests","api_token=${API_TOKEN}","url="${apigateway_qa_url}/gateway/Product%20API/manufacturer"]) {
 
 			dir("$tests_loc"){		
 			  sh '''
-				 k6 run performanceTests.js
+				 k6 run -e API_URL=$url performanceTests.js
 			   '''
 			 }
 		  }
